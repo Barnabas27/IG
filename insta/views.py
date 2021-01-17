@@ -78,3 +78,40 @@ def comment(request,image_id):
         else:
                 form = CommentForm()
         return render(request, 'instagram/comment.html',locals())
+
+@login_required(login_url='/accounts/login/')
+def search_results(request):
+    if 'username' in request.GET and request.GET["username"]:
+        search_term = request.GET.get("username")
+        searched_users = User.objects.filter(username__icontains = search_term)
+        message = f"{search_term}"
+        profile_pic = User.objects.all()
+        return render(request, 'instagram/search.html', {'message':message, 'results':searched_users, 'profile_pic':profile_pic})
+    else:
+        message = "You haven't searched for any term"
+        return render(request, 'instagram/search.html', {'message':message})
+
+def follow(request, user_id):
+    other_user = User.objects.get(id = user_id)
+    follow = Follow.objects.add_follower(request.user, other_user)
+
+    return redirect('home')
+
+def unfollow(request, user_id):
+    other_user = User.objects.get(id = user_id)
+    follow = Follow.objects.remove_follower(request.user, other_user)
+
+    return redirect('home')
+
+@login_required(login_url='/accounts/register/')
+def like_images(request, id):
+        image = Picture.get_one_image(id)
+        user = request.user
+        user_id = user.id
+
+        if user.is_authenticated:
+                uplike = image.votes.up(user_id)
+                image.like_add = image.votes.count()
+                image.save()
+
+        return redirect('index')
