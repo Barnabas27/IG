@@ -2,6 +2,8 @@ from django.db import models
 import datetime as dt
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
+from vote.models import VoteModel
+from vote.managers import VotableManager
 # Create your models here.
 
     
@@ -32,13 +34,13 @@ class Profile(models.Model):
     def search_user(cls,user):
         return cls.objects.filter(user__username__icontains = user).all()
         
-class Picture(models.Model):
+class Picture(VoteModel,models.Model):
     image = models.ImageField(upload_to = 'images/',blank = False, null = True)
     image_name = models.CharField(max_length = 100)
     image_caption = models.CharField(max_length = 100)
     profile = models.ForeignKey(Profile,on_delete = models.CASCADE)
-    likes = models.IntegerField(default=0)
-    comments = models.CharField(max_length = 1500)
+    # likes = models.IntegerField(default=0)
+    # comments = models.CharField(max_length = 1500)
     
     def save_image(self):
         self.save()
@@ -80,7 +82,7 @@ class Picture(models.Model):
 class Comments(models.Model):
     comment = models.CharField(max_length = 50, blank=True)
     posted = models.DateTimeField(auto_now_add=True)
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    image = models.ForeignKey(Picture, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save_comment(self):
@@ -98,3 +100,16 @@ class Comments(models.Model):
 
     def __str__(self):
         return self.comment
+class Likes(models.Model):
+    image = models.ForeignKey(Picture, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save_likes(self):
+        self.save()
+
+    def delete_like(self):
+        self.delete()
+
+    def count_likes(self):
+        likes = self.likes.count()
+        return likes
