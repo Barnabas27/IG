@@ -36,8 +36,8 @@ class Profile(models.Model):
         
 class Picture(VoteModel,models.Model):
     image = models.ImageField(upload_to = 'images/',blank = False, null = True)
-    image_name = models.CharField(max_length = 100)
-    image_caption = models.CharField(max_length = 100)
+    name = models.CharField(max_length = 100)
+    caption = models.CharField(max_length = 100)
     profile = models.ForeignKey(Profile,on_delete = models.CASCADE)
     # likes = models.IntegerField(default=0)
     # comments = models.CharField(max_length = 1500)
