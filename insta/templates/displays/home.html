@@ -1,134 +1,116 @@
 {%extends 'displays/base.html'%}
-{%load bootstrap4%}
-{% include "navbar.html%}
+{% load static%}
+{% load bootstrap4 %}
 
 {% block content %}
+{{block.super}}
+<div class="container-fluid" style="margin-top:8rem">
 
 
-  <div style="overflow-x: scroll;" class="columns">
-
-{% for story in stories %}
-  <div style="padding-right: 9px;">
-    <a name="{{ story.id }}" class="showModal">
-    <figure class="image is-128x128">
-      <img class="is-rounded" src="{{ story.following.profile.picture.url }}">
-    </figure>
-    <div class="media-content has-text-centered">
-      <p class="title is-6">@{{ story.following.username }}</p> 
-    </div>
-    </a>
-  </div>
-{% endfor %}
-
-  </div>
-
-
-<div class="modal">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p id="storiestitle" class="modal-card-title">Stories</p>
-      <button id="closeModal" class="delete" aria-label="close"></button>
-    </header>
-        <!-- Slideshow container -->
-
-    <section class="modal-card-body">
-    <div class="slideshow-container">
-
-      <!-- Full-width images with number and caption text
-
-      <div class="mySlides fade">
-        <div class="numbertext">1 / 3</div>
-        <img src="{% static 'img/background1.jpg' %}" style="width:100%">
-        <div class="text">Caption Text</div>
-      </div> -->
-
-      <div id="jsondata"></div>
-
-
-
-      <!-- Next and previous buttons -->
-        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-        <a class="next" onclick="plusSlides(1)">&#10095;</a>
-    </div>
-    </section>
-
-    </div>
-
-  </div>
-  <button class="modal-close is-large" aria-label="close"></button>
-</div>
-
-
-
-<br>
-  
-  <div class="columns is-mobile is-centered">
-  <div class="column is-half">
-
-{% for post_item in post_items %}
-  <div class="card">
-  <div class="card-image">
-
-  {% if post_item.content.first.file.name|slice:"-3:" == 'jpg' or post_item.content.first.file.name|slice:"-3:" == 'png' %}
-    <figure class="image is-5by3">
-      <a href="{{ post_item.get_absolute_url }}">
-        <img src="{{ post_item.content.first.file.url }}" alt="Placeholder image">
-      </a>
-    </figure>
-  {% else %}
-    <a href="{{ post_item.get_absolute_url }}">
-      <video width="1080" controls="controls" preload="metadata">
-        <source src="{{ post_item.content.first.file.url }}#t=0.5" type="video/mp4">        
-      </video>      
-    </a>
-  {% endif %}
-
-  </div>
-  <div class="card-content">
-    <div class="media">
-      <div class="media-left">
-        <figure class="image is-48x48">
-          {% if post_item.user.profile.picture %}
-            <img src="{{ post_item.user.profile.picture.url }}" alt="Placeholder image">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-7">
+    {% for image in posts %}
+    <div class="col-xs-6 col-sm-6 col-md-8 col-lg-8 mx-auto mb-3">
+      <div class="card">
+        <div class="card-header ">
+          {% if image %}
+          <img src="{{user.profile.photo.url}} " alt=""
+            style="width:50px; height:50px; border-radius:50px;z-index:3;"><span
+            class="ml-3">{{image.profile.username}}</span>
           {% else %}
-            <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-          {% endif %}
-        </figure>
+          <i class="fa fa-user-circle fa-4x"></i>
+          {% endif%}
+        </div>
+        <div class="card-body">
+          <img src="{{ image.image.url}}" alt="" class="img-responsive img-fluid" data-toggle="modal"
+            data-target=#{{image.id}}>
+        </div>
+        <div class="card-text">
+          <div class="icons d-flex text-center">
+            <div></div>
+            <a href=" {% url 'likes' image.pk %}"><i
+                class="fa fa-heart fa-2x text-danger mr-5">{{image.like_add}}</i></a> <br>
+
+            <a href=" {% url 'comment' image.id %}"><i class="fa fa-comment fa-2x"></i></a>
+
+          </div>
+
+          <div class="caption">
+            <h5><strong>{{image.profile.username}}</strong> {{image.caption}}</h5>
+            {% if image.comments_set.all %}
+            <p class=""> {{image.comments_set.all|length}} comments </p>
+            {% else %}
+            <p class="">0 comments </p>
+            {% endif %}
+          </div>
+
+        </div>
+        <div class="card-footer">
+          <h4>Comments:<span><a href="{% url 'comment' image.id %}" class="btn btn-sm btn-success"
+                style="float:right">Add Comment</a></span></h4>
+          <div class="card-body ">
+            <!-- <p class=""> {{comments|length}} comments </p> -->
+            {% for comment in comments %}
+            {% if comment.image_id == image.id%}
+
+            <h5><strong>{{comment.user}}</strong> {{comment.comment}}</h5>
+            <p>{{comment.posted | timesince}}</p>
+            <hr>
+
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
       </div>
-      <div class="media-content">
-        {% if post_item.user.profile.first_name %}
-          <a href="{% url 'profile' post_item.user %}"><p class="title is-4">{{ post_item.user.profile.first_name }} {{ post_item.user.profile.last_name }}</p></a>
-        {% else %}
-          <a href="{% url 'profile' post_item.user %}"><p class="title is-4">Unknown</p></a>
-        {% endif %}
 
-        <p class="subtitle is-6">@{{ post_item.user.username }}</p>
-
-      {{ post_item.caption }}
-      <p>{% for tag in post_item.tags.all %}<a href="{{ tag.get_absolute_url }}">#{{ tag }}</a>{% endfor %}</p>
-      <br>
-      <strong><small>{{ post_item.posted | naturaltime }}</small></strong>
-      </div>
-    
-
-    <div class="media-right">
-      <a href="{% url 'postlike' post_item.id %}"><i class="material-icons has-text-danger">favorite</i></a>
-      <p>{{ post_item.likes }} Likes</p>  
     </div>
+    <!-- Modal -->
+    <div class="modal fade " id="{{image.id}}" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
 
-</div>
+            <h4 class="modal-title"><img src="{{user.profile.photo.url}} " alt=""
+                style="width:50px; height:50px; border-radius:50px;z-index:3;"><span
+                class="ml-3">{{image.profile.username}}</span></h4>
+          </div>
+          <div class="modal-body">
+            <img src="{{ image.image.url}}" alt="" class="img-responsive img-fluid">
+            <h5><strong>{{image.profile.username}}</strong> {{image.caption}}</h5>
+            <div class="card-body ">
+              {% for comment in comments %}
+              {% if comment.image_id == image.id%}
+              <h5><strong>{{comment.user}}</strong> {{comment.comment}}</h5>
+              <p>{{comment.posted | timesince}}</p>
+              <hr>
 
-
-
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {% endfor %}
   </div>
+  <div class="col-md-3 avat">
+    <h3>Suggestions For You</h3>
+    {% for user in profile %}
+    <img src="{{user.photo.url}}" class="card-img-top" alt="{{user.user}}">
+    <p> {{user.user}} <button class="btn btn-success">Follow</button> </p>
+    <hr>
+    {% empty %}
+    <div class="row">
+        <h2 class="text-center">There No users</h2>
+    </div>
+    {% endfor %}
 </div>
-
-<br>
-
-{% endfor %}
+  </div>
 
 </div>
-</div>
-
 {% endblock %}
