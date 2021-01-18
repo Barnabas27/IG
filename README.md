@@ -12,7 +12,7 @@
 * Admin can regulate images uploaded by deleting from the admin dashboard as well as completely close a users account.
 
 ## Screenshots
-1. https://github.com/Barnabas27/IG/blob/master/static/images/page1.png
+1. [https://github.com/Barnabas27/IG/blob/master/static/images/page1.png]
 
 ## Behavior Driven Development
 | Behavior            | Input                         | Output                        | 

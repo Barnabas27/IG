@@ -18,6 +18,8 @@ django-urls = "*"
 django-utils-six = "*"
 django-bootstrap4 = "*"
 whitenoise = "*"
+gunicorn = "*"
+dj-database-url = "*"
 
 [dev-packages]
 
