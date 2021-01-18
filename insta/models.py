@@ -8,7 +8,7 @@ from vote.managers import VotableManager
 
     
 class Profile(models.Model):
-    profile_photo = models.ImageField(upload_to='images', blank =False, null = True)
+    photo = models.ImageField(upload_to='images', blank =True, null = True)
     Bio = models.TextField(max_length=1500)
     user = models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
     
@@ -38,10 +38,13 @@ class Picture(VoteModel,models.Model):
     image = models.ImageField(upload_to = 'images/',blank = False, null = True)
     name = models.CharField(max_length = 100)
     caption = models.CharField(max_length = 100)
-    profile = models.ForeignKey(Profile,on_delete = models.CASCADE)
+    profile = models.ForeignKey(User,on_delete = models.CASCADE)
     like_add = models.IntegerField(default=0)
     date_uploaded = models.DateTimeField(auto_now_add=True)
     # comments = models.CharField(max_length = 1500)
+    
+    def __str__(self):
+        return self.name
     
     def save_image(self):
         self.save()
@@ -70,12 +73,11 @@ class Picture(VoteModel,models.Model):
         return profile
     
     @classmethod
-    def get_one_image(cls,name):
-        image = cls.objects.get(pk = id)
+    def get_one_image(cls,id):
+        image = cls.objects.get(id = id)
         return image
     
-    def __str__(self):
-        return self.image_name
+    
     
     class Meta:
         ordering = ['-date_uploaded']
@@ -101,6 +103,7 @@ class Comments(models.Model):
 
     def __str__(self):
         return self.comment
+    
 class Likes(models.Model):
     image = models.ForeignKey(Picture, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
