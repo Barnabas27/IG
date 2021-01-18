@@ -14,12 +14,23 @@ votes = VotableManager()
 #     return render(request,'')
 @login_required(login_url='/accounts/login/')
 def home(request):
-    current_user = request.user
-    posts = Picture.get_all_images()
-    comments = Comments.objects.all()
-    profile = Profile.get_all_profiles()
-    
-    return render(request,'displays/home.html',locals())
+        current_user = request.user
+        posts = Picture.get_all_images()
+        comments = Comments.objects.all()
+        profile = Profile.get_all_profiles()
+        print("Our users", posts)
+        form = ProfileForm()
+        if request.method == 'POST':
+                form = ProfileForm(request.POST, request.FILES)
+                if form.is_valid():
+                        add=form.save(commit=False)
+                        add.profile = current_user
+                        add.save()
+                return redirect('home')
+        else:
+                form = ProfileForm()
+
+                return render(request,'displays/home.html',locals())
 
 @login_required(login_url='/accounts/login/')
 def add_image(request):
@@ -28,7 +39,7 @@ def add_image(request):
                 form = ImageForm(request.POST, request.FILES)
                 if form.is_valid():
                         add=form.save(commit=False)
-                        add.user = current_user
+                        add.profile = current_user
                         add.save()
                 return redirect('home')
         else:
@@ -40,7 +51,8 @@ def add_image(request):
 def profile_info(request):
         current_user = request.user
         profile = Profile.objects.filter(user=current_user).first()
-        posts = request.user.image_set.all()
+        # posts = request.user.image.all()
+        posts = Picture.objects.filter(profile=current_user.id)
         
         return render(request,'displays/profile.html',{"images":posts,"profile":profile})
     
@@ -74,7 +86,7 @@ def comment(request,image_id):
                         comment.save()
             
                        
-                return redirect('index')
+                return redirect('home')
         else:
                 form = CommentForm()
         return render(request, 'displays/comment.html',locals())
