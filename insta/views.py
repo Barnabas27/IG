@@ -57,7 +57,7 @@ def profile_info(request):
         return render(request,'displays/profile.html',{"images":posts,"profile":profile})
     
 @login_required(login_url='/accounts/login/') 
-def profile_update(request):
+def profile_update(request): 
          current_user = request.user
          if request.method == 'POST':
                 form = ProfileForm(request.POST, request.FILES)
