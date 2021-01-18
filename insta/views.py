@@ -13,13 +13,13 @@ votes = VotableManager()
 # def home(request):
 #     return render(request,'')
 @login_required(login_url='/accounts/login/')
-def index(request):
+def home(request):
     current_user = request.user
     posts = Picture.get_all_images()
     comments = Comments.objects.all()
     profile = Profile.get_all_profiles()
     
-    return render(request,'insta/home.html',locals())
+    return render(request,'displays/home.html',locals())
 
 @login_required(login_url='/accounts/login/')
 def add_image(request):
@@ -33,7 +33,7 @@ def add_image(request):
                 return redirect('home')
         else:
                 form = ImageForm()
-                return render(request,'insta/image.html', {"form":form})
+                return render(request,'displays/image.html', {"form":form})
             
 
 @login_required(login_url = '/accounts/login/')
@@ -42,7 +42,7 @@ def profile_info(request):
         profile = Profile.objects.filter(user=current_user).first()
         posts = request.user.image_set.all()
         
-        return render(request,'insta/profile.html',{"images":posts,"profile":profile})
+        return render(request,'displays/profile.html',{"images":posts,"profile":profile})
     
 @login_required(login_url='/accounts/login/') 
 def profile_update(request):
@@ -56,7 +56,7 @@ def profile_update(request):
                 return redirect('profile')
          else:
                 form = ProfileForm()
-         return render(request,'instagram/profile_update.html',{"form":form})
+         return render(request,'displays/profile_update.html',{"form":form})
 
 @login_required(login_url='/accounts/login/') 
 def comment(request,image_id):
@@ -77,7 +77,7 @@ def comment(request,image_id):
                 return redirect('index')
         else:
                 form = CommentForm()
-        return render(request, 'instagram/comment.html',locals())
+        return render(request, 'displays/comment.html',locals())
 
 @login_required(login_url='/accounts/login/')
 def search_results(request):
@@ -86,10 +86,10 @@ def search_results(request):
         searched_users = User.objects.filter(username__icontains = search_term)
         message = f"{search_term}"
         profile_pic = User.objects.all()
-        return render(request, 'instagram/search.html', {'message':message, 'results':searched_users, 'profile_pic':profile_pic})
+        return render(request, 'displays/search.html', {'message':message, 'results':searched_users, 'profile_pic':profile_pic})
     else:
         message = "You haven't searched for any term"
-        return render(request, 'instagram/search.html', {'message':message})
+        return render(request, 'displays/search.html', {'message':message})
 
 def follow(request, user_id):
     other_user = User.objects.get(id = user_id)
@@ -114,4 +114,4 @@ def like_images(request, id):
                 image.like_add = image.votes.count()
                 image.save()
 
-        return redirect('index')
+        return redirect('home')
