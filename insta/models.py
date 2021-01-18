@@ -39,7 +39,8 @@ class Picture(VoteModel,models.Model):
     name = models.CharField(max_length = 100)
     caption = models.CharField(max_length = 100)
     profile = models.ForeignKey(Profile,on_delete = models.CASCADE)
-    # likes = models.IntegerField(default=0)
+    like_add = models.IntegerField(default=0)
+    date_uploaded = models.DateTimeField(auto_now_add=True)
     # comments = models.CharField(max_length = 1500)
     
     def save_image(self):
