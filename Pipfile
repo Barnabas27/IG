@@ -10,6 +10,14 @@ django-bootstrap = "*"
 psycopg2 = "*"
 python-decouple = "*"
 pillow = "*"
+django-tinymce = "*"
+django-vote = "*"
+django-heroku = "*"
+django-registration = "==2.4.1"
+django-urls = "*"
+django-utils-six = "*"
+django-bootstrap4 = "*"
+whitenoise = "*"
 
 [dev-packages]
 
