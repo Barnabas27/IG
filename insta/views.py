@@ -15,16 +15,17 @@ votes = VotableManager()
 @login_required(login_url='/accounts/login/')
 def home(request):
         current_user = request.user
-        posts = Picture.get_all_images()
+        posts = Picture.get_all_images()  
+        # posts = Picture.objects.all()
         comments = Comments.objects.all()
         profile = Profile.get_all_profiles()
-        print("Our users", posts)
+        # print("Our users", posts)
         form = ProfileForm()
         if request.method == 'POST':
                 form = ProfileForm(request.POST, request.FILES)
                 if form.is_valid():
                         add=form.save(commit=False)
-                        add.profile = current_user
+                        add.user = current_user
                         add.save()
                 return redirect('home')
         else:
@@ -51,7 +52,7 @@ def add_image(request):
 def profile_info(request):
         current_user = request.user
         profile = Profile.objects.filter(user=current_user).first()
-        # posts = request.user.image.all()
+       
         posts = Picture.objects.filter(profile=current_user.id)
         
         return render(request,'displays/profile.html',{"images":posts,"profile":profile})
