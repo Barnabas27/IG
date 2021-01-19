@@ -3,7 +3,7 @@
 #### This is an application (akin to instagram) where user can post there pics in their profiles once having signed in, and get to also like other users pictures and connect.
 
 ## Project live si
- Visit the live link [here:] <image src = 'https://b-ig-app.herokuapp.com/accounts/login/?next=/'
+ Visit the live link [here:] (https://b-ig-app.herokuapp.com/accounts/login/?next=/)
 
 ## Features
 * User can log in to application and view other peoples posts.
@@ -12,7 +12,7 @@
 * Admin can regulate images uploaded by deleting from the admin dashboard as well as completely close a users account.
 
 ## Screenshots
-1. (https://github.com/Barnabas27/IG/blob/master/static/images/page1.png)
+1. <image src = 'https://github.com/Barnabas27/IG/blob/master/static/images/page1.png'>
 
 ## Behavior Driven Development
 | Behavior            | Input                         | Output                        | 
